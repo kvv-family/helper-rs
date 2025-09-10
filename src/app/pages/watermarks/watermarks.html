@@ -1,0 +1,95 @@
+<div class="flex flex-col gap-2">
+    <div class="flex gap-2">
+        <div class="flex flex-col gap-2 w-full">
+            <p-inputgroup>
+                <p-floatlabel variant="on">
+                    <input pInputText id="on_label" [formControl]="pathInput" />
+                    <label for="on_label">Путь с исходниками</label>
+                </p-floatlabel>
+                <p-inputgroup-addon>
+                    <p-button pTooltip="Выбрать папку" tooltipPosition="right" icon="pi pi-ellipsis-h"
+                        severity="secondary" variant="text" (click)="setDirectory('input')" />
+                </p-inputgroup-addon>
+            </p-inputgroup>
+            <p-inputgroup>
+                <p-floatlabel variant="on">
+                    <input pInputText id="on_label" [formControl]="pathWatermark" />
+                    <label for="on_label">Путь с водянными знаками</label>
+                </p-floatlabel>
+                <p-inputgroup-addon>
+                    <p-button pTooltip="Выбрать папку" tooltipPosition="right" icon="pi pi-ellipsis-h"
+                        severity="secondary" variant="text" (click)="setDirectory('watermark')" />
+                </p-inputgroup-addon>
+            </p-inputgroup>
+            <p-inputgroup>
+                <p-floatlabel variant="on">
+                    <input pInputText id="on_label" [formControl]="pathOutput" />
+                    <label for="on_label">Путь с результатами обработки</label>
+                </p-floatlabel>
+                <p-inputgroup-addon>
+                    <p-button pTooltip="Выбрать папку" tooltipPosition="right" icon="pi pi-ellipsis-h"
+                        severity="secondary" variant="text" (click)="setDirectory('output')" />
+                </p-inputgroup-addon>
+            </p-inputgroup>
+        </div>
+        <div class="flex flex-col gap-2 justify-center items-center">
+            <p-button label="Начать обработку" />
+            <span class="flex flex-col gap-2 items-center" pTooltip="Количество выходных файлов" tooltipPosition="left">
+                {{ 0 }}
+            </span>
+        </div>
+    </div>
+    <p-progressbar [value]="valueProgress" />
+    <p-panel header="Дополнительные настройки" [toggleable]="true">
+        <div class="grid grid-cols-2 gap-2">
+            <p-panel header="Название каталогов на выходе">
+                <div class="flex flex-col gap-2">
+                    <div class="flex items-center">
+                        <p-radiobutton name="watermark" value="watermark" [(ngModel)]="nameOutput"
+                            inputId="watermark" />
+                        <label for="watermark" class="ml-2">название водянного знака</label>
+                    </div>
+                    <div class="flex items-center">
+                        <p-radiobutton name="index" value="index" [(ngModel)]="nameOutput" inputId="index" />
+                        <label for="index" class="ml-2">номер по списку</label>
+                    </div>
+                </div>
+            </p-panel>
+            <p-panel header="Название файлов на выходе">
+                <div class="flex flex-col gap-2">
+                    <div class="flex items-center">
+                        <p-radiobutton name="origin" value="origin" [(ngModel)]="nameOutputFile" inputId="origin" />
+                        <label for="origin" class="ml-2">{{'{название вод.знака}.формат'}}</label>
+                    </div>
+                    <div class="flex items-center">
+                        <p-radiobutton name="index1" value="index" [(ngModel)]="nameOutputFile" inputId="index1" />
+                        <label for="index1" class="ml-2">{{'{номер по списку}.формат'}}</label>
+                    </div>
+                </div>
+            </p-panel>
+            <p-panel header="Формат выходных изображений">
+                <div class="flex items-center">
+                    <p-radiobutton name="png" value="png" [(ngModel)]="formatOutput" inputId="png" />
+                    <label for="png" class="ml-2">PNG</label>
+                </div>
+                <div class="flex items-center">
+                    <p-radiobutton name="jpg" value="jpg" [(ngModel)]="formatOutput" inputId="jpg" />
+                    <label for="jpg" class="ml-2">JPEG</label>
+                </div>
+                <div class="flex items-center">
+                    <p-radiobutton name="original" value="original" [(ngModel)]="formatOutput" inputId="original" />
+                    <label for="original" class="ml-2">Формат исходного изображения</label>
+                </div>
+            </p-panel>
+            <p-panel header="Индекс">
+                <p class="p-2">
+                    <p-floatlabel variant="on">
+                        <p-inputnumber [formControl]="startIndex" inputId="on_label" />
+                        <label for="on_label">Начальный индекс</label>
+                    </p-floatlabel>
+                </p>
+            </p-panel>
+        </div>
+    </p-panel>
+</div>
+<p-toast />
