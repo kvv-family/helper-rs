@@ -1,7 +1,6 @@
-use crate::config::{get_config, set_config, Config};
-use crate::images::overlay_images;
-use image::{DynamicImage, ImageReader};
-use std::fs;
+use crate::config::{get_config, prepare_config, Config};
+use crate::images::{general_fn, get_count_files, FilesCount};
+use tauri::{AppHandle, Emitter, Manager};
 
 pub mod config;
 pub mod images;
@@ -9,21 +8,22 @@ pub mod images;
 #[tauri::command]
 fn image_start(
     path_input: String,
-    // watermark_path: String,
-    // output_path: String,
-    // name_output: String,
-    // name_output_file: String,
-    // format_output: String,
-) -> Result<(), String> {
-    let mut config: Config = get_config();
-    config.path_input = path_input;
-    // config.path_watermark = watermark_path;
-    // config.path_output = output_path;
-    // config.name_output = name_output;
-    // config.name_output_file = name_output_file;
-    // config.format_output = format_output;
-    config = set_config(config);
+    watermark_path: String,
+    output_path: String,
+    name_output: String,
+    name_output_file: String,
+    format_output: String,
+) {
+    let config = prepare_config(
+        path_input,
+        watermark_path,
+        output_path,
+        name_output,
+        name_output_file,
+        format_output,
+    );
     println!("config: {}", config.path_input);
+    general_fn(config);
 
     // let files = fs::read_dir(config.path_input).map_err(|e| e.to_string())?;
     // for file in files {
@@ -49,25 +49,65 @@ fn image_start(
     // result.save("result.png").map_err(|e| e.to_string())?;
 
     // println!("Изображение успешно сохранено как result.png");
-    Ok(())
+    // Ok(())
+}
+
+#[tauri::command]
+fn get_count(
+    app: AppHandle,
+    path_input: String,
+    watermark_path: String,
+    output_path: String,
+    name_output: String,
+    name_output_file: String,
+    format_output: String,
+) {
+    let config: Config = prepare_config(
+        path_input,
+        watermark_path,
+        output_path,
+        name_output,
+        name_output_file,
+        format_output,
+    );
+
+    let watermark_count: i32 = get_count_files(&config.path_watermark);
+    let inputs_count: i32 = get_count_files(&config.path_input);
+
+    let payload = FilesCount {
+        watermark: watermark_count,
+        inputs: inputs_count,
+    };
+    app.emit("files_count", &payload).unwrap();
+}
+
+#[tauri::command]
+fn handler_config(app: AppHandle) {
+    let config = get_config();
+    app.emit("handler_config", &config).unwrap();
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let _ = get_config();
+    let config = get_config();
 
     tauri::Builder::default()
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_dialog::init())
-        .invoke_handler(tauri::generate_handler![image_start])
+        .invoke_handler(tauri::generate_handler![
+            image_start,
+            get_count,
+            handler_config
+        ])
         .setup(|app| {
             if cfg!(debug_assertions) {
                 app.handle().plugin(
                     tauri_plugin_log::Builder::default()
-                        .level(log::LevelFilter::Info)
+                        .level(log::LevelFilter::Debug)
                         .build(),
                 )?;
             }
+            app.manage(config);
             Ok(())
         })
         .run(tauri::generate_context!())

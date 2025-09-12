@@ -1,4 +1,19 @@
+use crate::config::Config;
 use image::{DynamicImage, Rgba};
+use serde::{Deserialize, Serialize};
+use std::fs;
+
+#[derive(Serialize, Deserialize)]
+pub struct Watermak {
+    pub name: String,
+    pub path: String,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct FilesCount {
+    pub watermark: i32,
+    pub inputs: i32,
+}
 
 fn blend_channel(base: u8, overlay: u8, alpha: f32) -> u8 {
     (overlay as f32 * alpha + base as f32 * (1.0 - alpha)) as u8
@@ -43,4 +58,37 @@ pub fn overlay_images(
     }
 
     DynamicImage::ImageRgba8(result)
+}
+
+pub fn get_count_files(path: &String) -> i32 {
+    let mut files_count: i32 = 0;
+    if let Ok(entries) = fs::read_dir(path) {
+        for entry in entries {
+            if let Ok(entry) = entry {
+                if let Ok(metadata) = entry.metadata() {
+                    if metadata.is_file() {
+                        files_count += 1;
+                    }
+                } else {
+                    println!(
+                        "Error reading metadata: {}",
+                        entry.metadata().unwrap_err().to_string()
+                    );
+                }
+            } else {
+                println!("Error reading entry: {}", entry.unwrap_err().to_string());
+            }
+        }
+    } else {
+        println!("Error reading directory: {}", path);
+    }
+    return files_count;
+}
+
+pub fn general_fn(config: Config) {
+    let res = fs::read_dir(config.path_input).map_err(|e| e.to_string());
+    let _ = match res {
+        Ok(files) => files,
+        Err(_) => panic!(""),
+    };
 }

@@ -47,3 +47,21 @@ pub fn set_config(config: Config) -> Config {
     fs::write(config_path, s).unwrap();
     return config;
 }
+
+pub fn prepare_config(
+    path_input: String,
+    watermark_path: String,
+    output_path: String,
+    name_output: String,
+    name_output_file: String,
+    format_output: String
+) -> Config {
+    let mut config: Config = get_config();
+    config.path_input = path_input;
+    config.path_watermark = watermark_path;
+    config.path_output = output_path;
+    config.name_output = name_output;
+    config.name_output_file = name_output_file;
+    config.format_output = format_output;
+    return set_config(config);
+}

@@ -11,7 +11,9 @@ import { ButtonModule } from 'primeng/button';
   styleUrl: './navigations.scss'
 })
 export class Navigations {
-  constructor(private router: Router) { }
+  constructor(private router: Router) {
+    
+  }
   navigateToWatermarks() {
     this.router.navigate(['/watermarks']);
   }

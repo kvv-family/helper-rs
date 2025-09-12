@@ -1,9 +1,9 @@
-<div class="flex flex-col gap-2">
+<form #mainForm="ngForm" class="flex flex-col gap-2" [formGroup]="generalForm" (ngSubmit)="submit($event)">
     <div class="flex gap-2">
         <div class="flex flex-col gap-2 w-full">
             <p-inputgroup>
                 <p-floatlabel variant="on">
-                    <input pInputText id="on_label" [formControl]="pathInput" />
+                    <input pInputText id="on_label" formControlName="pathInput" />
                     <label for="on_label">Путь с исходниками</label>
                 </p-floatlabel>
                 <p-inputgroup-addon>
@@ -11,9 +11,12 @@
                         severity="secondary" variant="text" (click)="setDirectory('input')" />
                 </p-inputgroup-addon>
             </p-inputgroup>
+            @if (isInvalid(mainForm, 'pathInput')) {
+            <p-message severity="error" size="small" variant="simple"> Поле не должно быть пустым. </p-message>
+            }
             <p-inputgroup>
                 <p-floatlabel variant="on">
-                    <input pInputText id="on_label" [formControl]="pathWatermark" />
+                    <input pInputText id="on_label" formControlName="pathWatermark" />
                     <label for="on_label">Путь с водянными знаками</label>
                 </p-floatlabel>
                 <p-inputgroup-addon>
@@ -21,9 +24,12 @@
                         severity="secondary" variant="text" (click)="setDirectory('watermark')" />
                 </p-inputgroup-addon>
             </p-inputgroup>
+            @if (isInvalid(mainForm, 'pathWatermark')) {
+            <p-message severity="error" size="small" variant="simple"> Поле не должно быть пустым. </p-message>
+            }
             <p-inputgroup>
                 <p-floatlabel variant="on">
-                    <input pInputText id="on_label" [formControl]="pathOutput" />
+                    <input pInputText id="on_label" formControlName="pathOutput" />
                     <label for="on_label">Путь с результатами обработки</label>
                 </p-floatlabel>
                 <p-inputgroup-addon>
@@ -31,9 +37,12 @@
                         severity="secondary" variant="text" (click)="setDirectory('output')" />
                 </p-inputgroup-addon>
             </p-inputgroup>
+            @if (isInvalid(mainForm, 'pathOutput')) {
+            <p-message severity="error" size="small" variant="simple"> Поле не должно быть пустым. </p-message>
+            }
         </div>
         <div class="flex flex-col gap-2 justify-center items-center">
-            <p-button label="Начать обработку" />
+            <p-button label="Начать обработку" type="submit" />
             <span class="flex flex-col gap-2 items-center" pTooltip="Количество выходных файлов" tooltipPosition="left">
                 {{ 0 }}
             </span>
@@ -45,12 +54,13 @@
             <p-panel header="Название каталогов на выходе">
                 <div class="flex flex-col gap-2">
                     <div class="flex items-center">
-                        <p-radiobutton name="watermark" value="watermark" [(ngModel)]="nameOutput"
-                            inputId="watermark" />
+                        <p-radiobutton name="watermark" value="watermark" [(ngModel)]="nameOutput" inputId="watermark"
+                            [ngModelOptions]="{standalone: true}" />
                         <label for="watermark" class="ml-2">название водянного знака</label>
                     </div>
                     <div class="flex items-center">
-                        <p-radiobutton name="index" value="index" [(ngModel)]="nameOutput" inputId="index" />
+                        <p-radiobutton name="index" value="index" [(ngModel)]="nameOutput"
+                            [ngModelOptions]="{standalone: true}" inputId="index" />
                         <label for="index" class="ml-2">номер по списку</label>
                     </div>
                 </div>
@@ -58,38 +68,43 @@
             <p-panel header="Название файлов на выходе">
                 <div class="flex flex-col gap-2">
                     <div class="flex items-center">
-                        <p-radiobutton name="origin" value="origin" [(ngModel)]="nameOutputFile" inputId="origin" />
+                        <p-radiobutton name="origin" value="origin" [(ngModel)]="nameOutputFile"
+                            [ngModelOptions]="{standalone: true}" inputId="origin" />
                         <label for="origin" class="ml-2">{{'{название вод.знака}.формат'}}</label>
                     </div>
                     <div class="flex items-center">
-                        <p-radiobutton name="index1" value="index" [(ngModel)]="nameOutputFile" inputId="index1" />
+                        <p-radiobutton name="index1" value="index" [(ngModel)]="nameOutputFile"
+                            [ngModelOptions]="{standalone: true}" inputId="index1" />
                         <label for="index1" class="ml-2">{{'{номер по списку}.формат'}}</label>
                     </div>
                 </div>
             </p-panel>
             <p-panel header="Формат выходных изображений">
                 <div class="flex items-center">
-                    <p-radiobutton name="png" value="png" [(ngModel)]="formatOutput" inputId="png" />
+                    <p-radiobutton name="png" value="png" [(ngModel)]="formatOutput"
+                        [ngModelOptions]="{standalone: true}" inputId="png" />
                     <label for="png" class="ml-2">PNG</label>
                 </div>
                 <div class="flex items-center">
-                    <p-radiobutton name="jpg" value="jpg" [(ngModel)]="formatOutput" inputId="jpg" />
+                    <p-radiobutton name="jpg" value="jpg" [(ngModel)]="formatOutput"
+                        [ngModelOptions]="{standalone: true}" inputId="jpg" />
                     <label for="jpg" class="ml-2">JPEG</label>
                 </div>
                 <div class="flex items-center">
-                    <p-radiobutton name="original" value="original" [(ngModel)]="formatOutput" inputId="original" />
+                    <p-radiobutton name="original" value="original" [(ngModel)]="formatOutput"
+                        [ngModelOptions]="{standalone: true}" inputId="original" />
                     <label for="original" class="ml-2">Формат исходного изображения</label>
                 </div>
             </p-panel>
             <p-panel header="Индекс">
                 <p class="p-2">
                     <p-floatlabel variant="on">
-                        <p-inputnumber [formControl]="startIndex" inputId="on_label" />
+                        <p-inputnumber formControlName="startIndex" inputId="on_label" />
                         <label for="on_label">Начальный индекс</label>
                     </p-floatlabel>
                 </p>
             </p-panel>
         </div>
     </p-panel>
-</div>
+</form>
 <p-toast />
