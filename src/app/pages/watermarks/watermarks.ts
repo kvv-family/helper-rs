@@ -24,10 +24,15 @@ interface FilesCount {
   inputs: number;
 }
 
+interface Progress {
+  result_file: number;
+}
+
 @Component({
   selector: 'app-watermarks',
   imports: [
-    CommonModule, ReactiveFormsModule, FormsModule, InputGroupModule, InputGroupAddonModule, InputTextModule, ButtonModule, FloatLabelModule, TooltipModule, PanelModule, ProgressBarModule, ToastModule, RadioButtonModule, InputNumberModule, MessageModule],
+    CommonModule, ReactiveFormsModule, FormsModule, InputGroupModule, InputGroupAddonModule, InputTextModule, ButtonModule, FloatLabelModule, TooltipModule, PanelModule, ProgressBarModule, ToastModule, RadioButtonModule, InputNumberModule, MessageModule
+  ],
   templateUrl: './watermarks.html',
   styleUrl: './watermarks.scss',
   providers: [MessageService]
@@ -39,33 +44,36 @@ export class Watermarks {
   formatOutput: string = "original";
   valueProgress: number = 0;
   countFiles: FilesCount | null = null;
+  countOutput: number = 0;
+  disableButton: boolean = false;
 
-  constructor(private fb: FormBuilder, private config: ConfigService, private cd: ChangeDetectorRef) {
-
+  constructor(private fb: FormBuilder, private config: ConfigService, private cd: ChangeDetectorRef, private messageService: MessageService) {
     this.generalForm = this.fb.group({
       pathInput: ['', [Validators.required]],
       pathWatermark: ['', [Validators.required]],
       pathOutput: ['', [Validators.required]],
       startIndex: [1]
-    })
-    this.generalForm.controls['pathInput'].disable();
-    this.generalForm.controls['pathWatermark'].disable();
-    this.generalForm.controls['pathOutput'].disable();
+    });
+    this.generalForm.controls['pathInput'].valueChanges.subscribe((data) => {
+      this.getCount();
+    });
+    this.generalForm.controls['pathWatermark'].valueChanges.subscribe((data) => {
+      this.getCount();
+    });
+  }
 
-    this.generalForm.valueChanges.subscribe((data) => {
-      console.log(data)
-      if (data.pathInput && data.pathWatermark && data.pathOutput) {
-        invoke('get_count', {
-          pathInput: this.generalForm.controls['pathInput'].value,
-          watermarkPath: this.generalForm.controls['pathWatermark'].value,
-          outputPath: this.generalForm.controls['pathOutput'].value,
-          nameOutput: this.nameOutput,
-          nameOutputFile: this.nameOutputFile,
-          formatOutput: this.formatOutput
-        });
-      }
-    })
-
+  getCount() {
+    const values = this.generalForm.value;
+    if (values.pathInput && values.pathWatermark) {
+      // invoke('get_count', {
+      //   pathInput: values.pathInput,
+      //   watermarkPath: values.pathWatermark,
+      //   outputPath: values.pathOutput,
+      //   nameOutput: this.nameOutput,
+      //   nameOutputFile: this.nameOutputFile,
+      //   formatOutput: this.formatOutput
+      // });
+    }
   }
 
   ngOnInit(): void {
@@ -77,13 +85,31 @@ export class Watermarks {
         this.nameOutput = data.name_output;
         this.nameOutputFile = data.name_output_file;
         this.formatOutput = data.format_output;
+        if (!this.countFiles) {
+          this.getCount();
+        }
         this.cd.detectChanges();
       }
     });
     listen<FilesCount>('files_count', (event) => {
-      console.log(event)
       this.countFiles = event.payload;
+      this.countOutput = this.countFiles.watermark * this.countFiles.inputs;
+      this.cd.detectChanges();
     });
+    listen<Progress>('report_progress', (event) => {
+      if (this.countFiles) {
+        const temp = 100 * event.payload.result_file / (this.countFiles.watermark * this.countFiles.inputs)
+        this.valueProgress = Number(temp.toFixed(0));
+        this.cd.detectChanges();
+      }
+    });
+    listen('ready', (event) => {
+      this.valueProgress = 100;
+      this.messageService.add({ severity: 'success', summary: 'Успешно', detail: 'Обработка завершена' });
+      this.disableButton = false;
+      this.cd.detectChanges();
+    });
+    this.getCount();
   }
 
   setDirectory(type: 'input' | 'watermark' | 'output') {
@@ -113,8 +139,18 @@ export class Watermarks {
   }
 
   submit(form: FormGroupDirective) {
-    console.log(form.value)
-    if (!this.isInvalid) {
+    if (!this.isInvalid(form)) {
+      this.valueProgress = 0;
+      const values = form.value;
+      this.disableButton = true;
+      invoke('image_start', {
+        pathInput: values.pathInput,
+        watermarkPath: values.pathWatermark,
+        outputPath: values.pathOutput,
+        nameOutput: this.nameOutput,
+        nameOutputFile: this.nameOutputFile,
+        formatOutput: this.formatOutput
+      });
     }
   }
 }

@@ -1,4 +1,4 @@
-<form #mainForm="ngForm" class="flex flex-col gap-2" [formGroup]="generalForm" (ngSubmit)="submit($event)">
+<form #mainForm="ngForm" class="flex flex-col gap-2" [formGroup]="generalForm" (ngSubmit)="submit(mainForm)">
     <div class="flex gap-2">
         <div class="flex flex-col gap-2 w-full">
             <p-inputgroup>
@@ -42,12 +42,14 @@
             }
         </div>
         <div class="flex flex-col gap-2 justify-center items-center">
-            <p-button label="Начать обработку" type="submit" />
+            <p-button label="Начать обработку" type="submit" [disabled]="disableButton" />
             <span class="flex flex-col gap-2 items-center" pTooltip="Количество выходных файлов" tooltipPosition="left">
-                {{ 0 }}
+                {{ countOutput }}
             </span>
         </div>
     </div>
+    <p-toast />
+
     <p-progressbar [value]="valueProgress" />
     <p-panel header="Дополнительные настройки" [toggleable]="true">
         <div class="grid grid-cols-2 gap-2">
@@ -107,4 +109,3 @@
         </div>
     </p-panel>
 </form>
-<p-toast />

@@ -19,7 +19,6 @@ export class ConfigService {
   config: BehaviorSubject<Config | null> = new BehaviorSubject<Config | null>(null);
   constructor() {
     listen<Config>('handler_config', (event) => {
-      console.log("Event ", event.payload);
       this.config.next(event.payload);
     });
   }

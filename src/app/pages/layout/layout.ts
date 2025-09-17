@@ -40,7 +40,6 @@ export class Layout implements OnInit {
     ).subscribe((current) => {
       if (current instanceof NavigationEnd) {
         const urls = current.url.split('/');
-        console.log(urls);
         let result: boolean = false;
         for (let i = 0; i < urls.length; i++) {
           if (urls[i] !== '') {

@@ -1,17 +1,20 @@
 import { Routes } from '@angular/router';
+import { Layout } from './pages/layout/layout';
+import { Navigations } from './pages/navigations/navigations';
+import { Watermarks } from './pages/watermarks/watermarks';
 
 export const routes: Routes = [
     {
         path: '',
-        loadComponent: () => import('./pages/layout/layout').then(m => m.Layout),
+        component: Layout,
         children: [
             {
                 path: '',
-                loadComponent: () => import('./pages/navigations/navigations').then(m => m.Navigations)
+                component: Navigations
             },
             {
                 path: 'watermarks',
-                loadComponent: () => import('./pages/watermarks/watermarks').then(m => m.Watermarks)
+                component: Watermarks
             }
         ]
     }

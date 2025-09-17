@@ -1,3 +1,4 @@
+use directories::UserDirs;
 use serde::{Deserialize, Serialize};
 use serde_json;
 use std::fs;
@@ -24,11 +25,16 @@ fn default_config() -> Config {
 }
 
 pub fn get_config() -> Config {
-    let config_path = "config.json";
-    if !fs::exists(config_path).unwrap() {
+    let path = UserDirs::new().unwrap().home_dir().join("image-helper");
+    println!("path: {:?}", path);
+    if !fs::exists(&path).unwrap() {
+        fs::create_dir_all(&path).unwrap();
+    }
+    let config_path = path.join("config.json");
+    if !fs::exists(&config_path).unwrap() {
         let config = default_config();
         let s = serde_json::to_string(&config).unwrap();
-        fs::write(config_path, s).unwrap();
+        fs::write(&config_path, s).unwrap();
         return config;
     } else {
         let res = fs::read_to_string(config_path);
@@ -42,9 +48,13 @@ pub fn get_config() -> Config {
 }
 
 pub fn set_config(config: Config) -> Config {
-    let config_path = "config.json";
+    let path = UserDirs::new().unwrap().home_dir().join("image-helper");
+    if !fs::exists(&path).unwrap() {
+        fs::create_dir_all(&path).unwrap();
+    }
+    let config_path = path.join("config.json");
     let s = serde_json::to_string(&config).unwrap();
-    fs::write(config_path, s).unwrap();
+    fs::write(&config_path, s).unwrap();
     return config;
 }
 
@@ -54,7 +64,7 @@ pub fn prepare_config(
     output_path: String,
     name_output: String,
     name_output_file: String,
-    format_output: String
+    format_output: String,
 ) -> Config {
     let mut config: Config = get_config();
     config.path_input = path_input;

@@ -1,12 +1,14 @@
 use crate::config::{get_config, prepare_config, Config};
-use crate::images::{general_fn, get_count_files, FilesCount};
+use crate::images::{general_fn, get_count_config, FilesCount};
 use tauri::{AppHandle, Emitter, Manager};
+use std::thread;
 
 pub mod config;
 pub mod images;
 
 #[tauri::command]
 fn image_start(
+    app: AppHandle,
     path_input: String,
     watermark_path: String,
     output_path: String,
@@ -22,34 +24,11 @@ fn image_start(
         name_output_file,
         format_output,
     );
-    println!("config: {}", config.path_input);
-    general_fn(config);
-
-    // let files = fs::read_dir(config.path_input).map_err(|e| e.to_string())?;
-    // for file in files {
-    //     let file = file.map_err(|e| e.to_string())?;
-    //     let path = file.path();
-    //     let file_name = path.file_name().unwrap().to_str().unwrap();
-    //     println!("{}", file_name);
-    // }
-    // let base_image: DynamicImage = ImageReader::open("1.png")
-    //     .map_err(|e| e.to_string())?
-    //     .decode()
-    //     .map_err(|e| e.to_string())?;
-    // let overlay_image: DynamicImage = ImageReader::open("2.png")
-    //     .map_err(|e| e.to_string())?
-    //     .decode()
-    //     .map_err(|e| e.to_string())?;
-
-    // let x = (base_image.width() - overlay_image.width()) / 2;
-    // let y = (base_image.height() - overlay_image.height()) / 2;
-
-    // let result = overlay_images(&base_image, &overlay_image, x, y);
-
-    // result.save("result.png").map_err(|e| e.to_string())?;
-
-    // println!("Изображение успешно сохранено как result.png");
-    // Ok(())
+    let payload: FilesCount = get_count_config(&config);
+    app.emit("files_count", &payload).unwrap();
+    thread::spawn(move || {
+        general_fn(config, app);
+    });
 }
 
 #[tauri::command]
@@ -70,14 +49,7 @@ fn get_count(
         name_output_file,
         format_output,
     );
-
-    let watermark_count: i32 = get_count_files(&config.path_watermark);
-    let inputs_count: i32 = get_count_files(&config.path_input);
-
-    let payload = FilesCount {
-        watermark: watermark_count,
-        inputs: inputs_count,
-    };
+    let payload: FilesCount = get_count_config(&config);
     app.emit("files_count", &payload).unwrap();
 }
 
