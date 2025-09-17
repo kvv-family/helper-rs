@@ -1,15 +1,15 @@
 {
-    "version": "0.1.0",
-    "notes": "Базовый релиз",
-    "pub_date": "2025-09-10",
-    "platforms": {
-      "linux-x86_64": {
-        "signature": "",
-        "url": ""
-      },
-      "windows-x86_64": {
-        "signature": "",
-        "url": ""
-      }
+  "version": "0.1.1",
+  "notes": "Базовый релиз",
+  "pub_date": "2025-09-17T08:50:43.973Z",
+  "platforms": {
+    "linux-x86_64": {
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUMC92NVhUYzhSNlU0dUtrakMrWkFyNS9kN3R1UUJ1eWErWlRYUWVJcEVYZzZwSnRqQTZVbW1iL21KNDVGSkdMdlk0VHp4bkh6SnRsOVFwQzNpcVlBa3lxblRvYVpmbkEwPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzU4MDk5MzgwCWZpbGU6aW1hZ2UtaGVscGVyXzAuMS4xX2FtZDY0LmRlYgpmQmp1aUJPa0E2RnFHNFVtb2QvZGhYTDVaL2wrb2tMVjNmOGRDK1RFSThSeFNnckpvQXZHMGY4cWNtTmd1ZEpvNHdLb2VVNk56TldVVGE3M3dMeEtCdz09Cg==",
+      "url": "https://github.com/kvv-family/helper-rs/releases/download/latest/image-helper_0.1.1_amd64.deb"
+    },
+    "windows-x86_64": {
+      "signature": "",
+      "url": "https://github.com/kvv-family/helper-rs/releases/download/latest/image-helper_0.1.0_x64-setup.exe"
     }
   }
+}

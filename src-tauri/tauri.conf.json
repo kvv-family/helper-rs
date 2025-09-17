@@ -1,8 +1,8 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "image-helper",
-  "version": "0.1.0",
-  "identifier": "com.image-helper.dev",
+  "productName": "helper-rs",
+  "version": "0.1.1",
+  "identifier": "com.helper-rs.dev",
   "build": {
     "frontendDist": "../dist/image-helper/browser",
     "devUrl": "http://localhost:4200",
@@ -27,7 +27,10 @@
   "bundle": {
     "active": true,
     "targets": [
-      "deb"
+      "app",
+      "deb",
+      "msi",
+      "rpm"
     ],
     "createUpdaterArtifacts": true,
     "icon": [

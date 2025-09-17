@@ -1,25 +1,9 @@
 use crate::config::Config;
 use image::{DynamicImage, ImageReader, Rgba};
-use serde::{Deserialize, Serialize};
 use std::fs;
 use tauri::{AppHandle, Emitter};
 
-#[derive(Serialize, Deserialize)]
-pub struct Watermak {
-    pub name: String,
-    pub path: String,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct FilesCount {
-    pub watermark: i32,
-    pub inputs: i32,
-}
-
-#[derive(Serialize, Deserialize)]
-pub struct Progress {
-    pub result_file: i32,
-}
+use crate::images::structs::{FilesCount, Progress};
 
 fn blend_channel(base: u8, overlay: u8, alpha: f32) -> u8 {
     (overlay as f32 * alpha + base as f32 * (1.0 - alpha)) as u8

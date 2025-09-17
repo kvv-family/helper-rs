@@ -26,6 +26,9 @@ tauri-plugin-log = "2"
 image = "0.25.8"
 tauri-plugin-dialog = "2"
 directories = "6.0.0"
+diesel = { version = "2.3.1", features = ["sqlite", "returning_clauses_for_sqlite_3_35", "r2d2", "uuid", "chrono"] }
+uuid = { version = "1.0", features = ["serde", "v4"] }
+chrono = { version = "0.4", features = ["serde"] }
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-updater = "2"

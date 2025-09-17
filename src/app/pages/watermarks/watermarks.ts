@@ -35,7 +35,6 @@ interface Progress {
   ],
   templateUrl: './watermarks.html',
   styleUrl: './watermarks.scss',
-  providers: [MessageService]
 })
 export class Watermarks {
   generalForm: FormGroup;
